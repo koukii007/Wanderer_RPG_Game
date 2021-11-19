@@ -15,11 +15,25 @@ hero = Hero()
 # This method is called continuously by the main game loop
 def draw_screen():
     canvas.delete("all")
-    canvas.create_image(0, 0, image=root.floor, anchor=NW)
-    canvas.create_image(IMG_SIZE, 0, image=root.wall, anchor=NW)
-    canvas.create_image(2 * IMG_SIZE, 0, image=root.skeleton, anchor=NW)
-    canvas.create_image(3 * IMG_SIZE, 0, image=root.boss, anchor=NW)
-    canvas.create_image(hero.x * IMG_SIZE, hero.y * IMG_SIZE, image=getattr(root, hero.img), anchor=NW)
+    with open('map.txt', 'r') as map_display:
+        map_key = map_display.readlines()
+        starting_point = 0
+        ending_point = 0
+        for line in range(len(map_key)):
+            for i in range(0, len(map_key[line])):
+                if map_key[line][i] == "F":
+                    canvas.create_image(starting_point, ending_point, image=root.floor, anchor=NW)
+                    starting_point += IMG_SIZE
+                elif map_key[line][i] == "W":
+                    canvas.create_image(starting_point, ending_point, image=root.wall, anchor=NW)
+                    starting_point += IMG_SIZE
+
+
+
+
+    #canvas.create_image(2 * IMG_SIZE, 0, image=root.skeleton, anchor=NW)
+    # canvas.create_image(3 * IMG_SIZE, 0, image=root.boss, anchor=NW)
+    # canvas.create_image(hero.x * IMG_SIZE, hero.y * IMG_SIZE, image=getattr(root, hero.img), anchor=NW)
 
 # Loading images. You can access these loaded images from the root object.
 # For example: root.floor or getattr(root, "floor")
