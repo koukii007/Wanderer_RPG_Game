@@ -1,9 +1,11 @@
-import random
 from tkinter import *
+from tkinter import NW
 from Hero import Hero
-from skeleton import skeleton
+from skeleton import *
 from BOSS import BOSS
 from sounds import *
+from key import key
+import random
 import pygame
 import os
 
@@ -37,27 +39,36 @@ stop_music()
 
 hero = Hero()
 hero.stats()
-skeleton1 = skeleton()
-skeleton2 = skeleton()
-skeleton3 = skeleton()
+skeleton1 = skeleton_1()
+skeleton2 = skeleton_2()
+skeleton3 = skeleton_3()
 skeleton1.stats()
 skeleton2.stats()
 skeleton3.stats()
 Boss =BOSS()
 Boss.stats()
+keys = key()
 
 
-
-class draw():
-
+class draw:
     def __init__(self):
         self.map_key = None
+
+    def draw_characters(self):
+        canvas.create_image(hero.x * IMG_SIZE, hero.y * IMG_SIZE, image=getattr(root, hero.img), anchor=NW)
+        canvas.create_image(skeleton1.x * IMG_SIZE, skeleton1.y * IMG_SIZE, image=getattr(root, skeleton1.img), anchor=NW)
+        canvas.create_image(skeleton2.x * IMG_SIZE, skeleton2.y * IMG_SIZE, image=getattr(root, skeleton2.img), anchor=NW)
+        canvas.create_image(skeleton3.x * IMG_SIZE, skeleton3.y * IMG_SIZE, image=getattr(root, skeleton3.img), anchor=NW)
+        canvas.create_image(Boss.x * IMG_SIZE, Boss.y * IMG_SIZE, image=getattr(root, "boss"), anchor=NW)
+        canvas.create_image(keys.x * IMG_SIZE, keys.y * IMG_SIZE, image=getattr(root, keys.img), anchor=NW)
+
+
 
     def draw_map(self):
 
         canvas.delete("all")
         if not self.map_key:
-            with open('map.txt', 'r') as map_display:
+            with open('first_map.txt', 'r') as map_display:
                 self.map_key = map_display.readlines()
             ending_point = 0
             all_wall_coords = []
@@ -78,12 +89,18 @@ class draw():
                 ending_point += IMG_SIZE
             return  all_wall_coords
 
-    def draw_characters(self):
-        canvas.create_image(hero.x * IMG_SIZE, hero.y * IMG_SIZE, image=getattr(root, hero.img), anchor=NW)
-        canvas.create_image(skeleton1.xskeleton1 * IMG_SIZE, skeleton1.yskeleton1 * IMG_SIZE, image=getattr(root, skeleton1.img), anchor=NW)
-        canvas.create_image(skeleton2.xskeleton2 * IMG_SIZE, skeleton2.yskeleton2 * IMG_SIZE, image=getattr(root, skeleton2.img), anchor=NW)
-        canvas.create_image(skeleton3.xskeleton3 * IMG_SIZE, skeleton3.yskeleton3 * IMG_SIZE, image=getattr(root, skeleton3.img), anchor=NW)
-        canvas.create_image(Boss.xBoss * IMG_SIZE, Boss.yBoss * IMG_SIZE, image=getattr(root, "boss"), anchor=NW)
+    def distribute_key(self):
+        if skeleton1.key_holder == 1 :
+            skeleton2.Is_key_holder(x = 0)
+            skeleton3.Is_key_holder(x=0)
+        elif skeleton2.key_holder == 1:
+            skeleton1.Is_key_holder(x=0)
+            skeleton3.Is_key_holder(x=0)
+        elif skeleton3.key_holder == 1:
+            skeleton1.Is_key_holder(x=0)
+            skeleton2.Is_key_holder(x=0)
+        elif skeleton1.key_holder == 0 and skeleton2.key_holder == 0 and skeleton3.key_holder == 0:
+            skeleton2.Is_key_holder(x=1)
 
 
 class show_stats():
@@ -93,17 +110,28 @@ class show_stats():
         canvas.create_rectangle(733, 13, 1007, 100, fill="#EDD7F5", width=2)
         canvas.create_text(870,55,text = "STATS" ,font = ("arial",50,"bold"), fill = "#FA545C")
         canvas.create_text(790, 140, text=f"\nHero HP : {hero.HP}\nHero DP : {hero.DP}\nHero SP : {hero.SP}", font=("arial", 16) , fill="black")
+        canvas.create_text(870,600, text=f"\n Your Mission it to eliminate the monsters"
+                                          f"\n and extract the key."
+                                          f"\n Defeat the Boss, and you will"
+                                          f"\n teleport to the next map."
+                                          f"\n\n Press the space bar to strike."
+                                          f"\n Press F to pick an item.", font=("arial", 11,"bold") , fill="red")
+        if keys.x == -2 and keys.y == -2:
+            canvas.create_text(860, 300, text=f"You have successfully retrieved the key.",
+                               font=("arial", 11), fill="blue")
+
     def show_monster_stats(self):
 
         coords_hero = (hero.x, hero.y)
-        coords_monster1 = (skeleton1.xskeleton1, skeleton1.yskeleton1)
-        coords_monster2 = (skeleton2.xskeleton2, skeleton2.yskeleton2)
-        coords_monster3 = (skeleton3.xskeleton3, skeleton3.yskeleton3)
-        coords_Boss = (Boss.xBoss,Boss.yBoss)
+        coords_monster1 = (skeleton1.x, skeleton1.y)
+        coords_monster2 = (skeleton2.x, skeleton2.y)
+        coords_monster3 = (skeleton3.x, skeleton3.y)
+        coords_Boss = (Boss.x,Boss.y)
 
         if coords_hero == coords_monster1:
             canvas.create_text(810, 220,
                                text=f"\nMonster HP : {skeleton1.HP}\nMonster DP : {skeleton1.DP}\nMonster SP : {skeleton1.SP}",
+
                                font=("arial", 16), fill="Red")
         elif coords_hero == coords_monster2:
             canvas.create_text(810, 220,
@@ -120,6 +148,7 @@ class show_stats():
                                font=("arial", 16), fill="Red")
 
 
+
 def load_images():
     dir = "images/"
     root.floor = PhotoImage(file=dir + "floor.png")
@@ -133,22 +162,20 @@ def load_images():
     root.strike = PhotoImage(file=dir +"strike.png")
     root.ghost = PhotoImage (file=dir + "ghost.png")
     root.key = PhotoImage(file=dir + "key.png")
+    root.effect = PhotoImage(file=dir + "effect.png")
 load_images()
-
 
 map = draw()
 wall_coords = map.draw_map()
 count = 0
 
 def leftKey(event):
-
-
     position_check = (hero.x-1, hero.y)
     if 10 > hero.x > 0 and position_check not in wall_coords :
         hero.move(x = -1)
         hero.img = "hero_left"
         coords_hero = (hero.x, hero.y)
-        coords_Boss = (Boss.xBoss, Boss.yBoss)
+        coords_Boss = (Boss.x, Boss.y)
         if coords_hero == coords_Boss:
             Boss_sound()
     else:
@@ -164,15 +191,13 @@ def leftKey(event):
         Boss.move()
     else:
         count =0
-
 def rightKey(event):
-
     position_check = (hero.x + 1 , hero.y)
     if 9 > hero.x >= 0 and position_check not in wall_coords:
         hero.move(x = 1)
         hero.img = "hero_right"
         coords_hero = (hero.x, hero.y)
-        coords_Boss = (Boss.xBoss, Boss.yBoss)
+        coords_Boss = (Boss.x, Boss.y)
         if coords_hero == coords_Boss:
             Boss_sound()
     else:
@@ -188,15 +213,13 @@ def rightKey(event):
         Boss.move()
     else:
         count = 0
-
 def upKey(event):
-
     position_check = (hero.x , hero.y-1)
     if 10 > hero.y > 0 and position_check not in wall_coords :
         hero.move(y = -1)
         hero.img = "hero_up"
         coords_hero = (hero.x, hero.y)
-        coords_Boss = (Boss.xBoss, Boss.yBoss)
+        coords_Boss = (Boss.x, Boss.y)
         if coords_hero == coords_Boss:
             Boss_sound()
     else:
@@ -214,14 +237,12 @@ def upKey(event):
         count = 0
 
 def downKey(event):
-
-
-    position_check = (hero.x , hero.y +1 )
+    position_check = (hero.x, hero.y +1)
     if 9 > hero.y >= 0 and position_check not in wall_coords:
-        hero.move(y = 1)
+        hero.move(y=1)
         hero.img = "hero_down"
         coords_hero = (hero.x, hero.y)
-        coords_Boss = (Boss.xBoss, Boss.yBoss)
+        coords_Boss = (Boss.x, Boss.y)
         if coords_hero == coords_Boss:
             Boss_sound()
     else:
@@ -237,6 +258,8 @@ def downKey(event):
         Boss.move()
     else:
         count = 0
+
+
 def space_key_press(event):
 
     for i in range(0,100):
@@ -245,39 +268,65 @@ def space_key_press(event):
         canvas.create_image(hero.x * IMG_SIZE, hero.y * IMG_SIZE,
                             image=getattr(root, "strike"), anchor=NW)
     coords_hero = (hero.x, hero.y)
-    coords_monster1 = (skeleton1.xskeleton1, skeleton1.yskeleton1)
-    coords_monster2 = (skeleton2.xskeleton2, skeleton2.yskeleton2)
-    coords_monster3 = (skeleton3.xskeleton3, skeleton3.yskeleton3)
-    coords_Boss = (Boss.xBoss, Boss.yBoss)
+    coords_monster1 = (skeleton1.x, skeleton1.y)
+    coords_monster2 = (skeleton2.x, skeleton2.y)
+    coords_monster3 = (skeleton3.x, skeleton3.y)
+    coords_Boss = (Boss.x, Boss.y)
     if coords_hero == coords_monster1:
         hero.strike()
         if hero.SP_Value > skeleton1.DP:
             skeleton1.receive_strike(hero.SP_Value)
-            if skeleton1.HP > 0 :
+            if skeleton1.HP > 0:
                 hero.receive_strike(skeleton1.strike_back)
+            elif skeleton1.HP == 0:
+                if skeleton1.key_holder == 1:
+                    keys.receive_position(x=skeleton1.x, y=skeleton1.y)
 
-
+                else:
+                    pass
     elif coords_hero == coords_monster2:
         hero.strike()
         if hero.SP_Value > skeleton2.DP:
             skeleton2.receive_strike(hero.SP_Value)
-            if skeleton2.HP > 0 :
+            if skeleton2.HP > 0:
                 hero.receive_strike(skeleton1.strike_back)
+            elif skeleton2.HP == 0:
+                if skeleton2.key_holder == 1:
+                    keys.receive_position(x=skeleton2.x, y=skeleton2.y)
+                else:
+                    pass
     elif coords_hero == coords_monster3:
         hero.strike()
         if hero.SP_Value > skeleton3.DP:
             skeleton3.receive_strike(hero.SP_Value)
-            if skeleton3.HP > 0 :
+            if skeleton3.HP > 0:
                 hero.receive_strike(skeleton1.strike_back)
             elif skeleton3.HP == 0:
-                skeleton3.img = "key"
-                
-    elif coords_hero == coords_Boss :
+                if skeleton3.key_holder == 1:
+                    keys.receive_position(x=skeleton3.x, y=skeleton3.y)
+                else:
+                    pass
+    elif coords_hero == coords_Boss:
         hero.strike()
         if hero.SP_Value > Boss.DP:
             Boss.receive_strike(hero.SP_Value)
-            if Boss.HP > 0 :
+            if Boss.HP > 0:
                 hero.receive_strike(Boss.strike_back)
+            elif Boss.HP ==0:
+                hero.level_up
+                skeleton1.level_up
+                skeleton2.level_up
+                skeleton3.level_up
+                Boss.level_up
+
+def pick_up_key(event):
+    hero_coords = (hero.x, hero.y)
+    key_coords = (keys.x, keys.y)
+    if hero_coords == key_coords:
+        keys.receive_position(x=-2,y=-2)
+        for i in range(0, 100):
+            canvas.create_image(hero.x * IMG_SIZE, hero.y * IMG_SIZE,
+                                image=getattr(root, "effect"), anchor=NW)
 
 
 root.bind('<Left>', leftKey)
@@ -289,19 +338,17 @@ root.bind('<w>', upKey)
 root.bind('<Down>', downKey)
 root.bind('<s>', downKey)
 root.bind('<space>', space_key_press)
-
+root.bind('<f>', pick_up_key)
 # Don't write anything after this while loop, because that won't be executed
 # The main game loop, at the moment it calls the draw_screen function continuously
 clock = pygame.time.Clock()
 stat_report = show_stats()
-def move_skeletons():
-    skeleton1.move_skeleton1()
-    skeleton2.move_skeleton2()
-    skeleton3.move_skeleton3()
+
 while True:
     map = draw()
     map.draw_map()
     map.draw_characters()
+    map.distribute_key()
     stat_report.draw_stats()
     stat_report.show_monster_stats()
     clock.tick(60)

@@ -21,3 +21,5 @@ class Hero():
         self.HP -= strike_back
         if self.HP <0:
             self.img = "skull"
+    def level_up(self):
+        pass

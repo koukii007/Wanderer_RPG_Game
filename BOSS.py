@@ -2,7 +2,7 @@ import random
 
 def coords_check():
     IMG_SIZE = 72
-    with open('map.txt', 'r') as map_display:
+    with open('first_map.txt', 'r') as map_display:
         map_key = map_display.readlines()
         ending_point = 0
         all_wall_coords = []
@@ -27,19 +27,19 @@ floor_perimiter = [(1,-1),(2,-1),(3,-1),(4,-1),(5,-1),(6,-1),(7,-1),(8,-1),(9,-1
 
 class BOSS:
     def __init__(self):
-        self.xBoss = random.randint(0,4)
-        self.yBoss = random.randint(5, 9)
-        tuple_check = (self.xBoss, self.yBoss)
+        self.x = random.randint(0,4)
+        self.y = random.randint(5, 9)
+        tuple_check = (self.x, self.y)
         while tuple_check in coords_check():
-            self.xBoss = random.randint(0,4)
-            self.yBoss = random.randint(5, 9)
-            tuple_check = (self.xBoss, self.yBoss)
+            self.x = random.randint(0,4)
+            self.y = random.randint(5, 9)
+            tuple_check = (self.x, self.y)
     def move(self):
 
-        top = (self.xBoss, self.yBoss - 1)
-        right = (self.xBoss + 1, self.yBoss)
-        left = (self.xBoss - 1, self.yBoss)
-        bottom = (self.xBoss, self.yBoss + 1)
+        top = (self.x, self.y - 1)
+        right = (self.x + 1, self.y)
+        left = (self.x - 1, self.y)
+        bottom = (self.x, self.y + 1)
         possibility_array = [top, right, left, bottom]
         move_to_list = []
         for item in possibility_array:
@@ -49,8 +49,8 @@ class BOSS:
                 continue
 
         move_to_these_coords = random.choice(move_to_list)
-        self.xBoss = move_to_these_coords[0]
-        self.yBoss = move_to_these_coords[1]
+        self.x = move_to_these_coords[0]
+        self.y = move_to_these_coords[1]
     def stats(self, x = 1):
         self.HP = 2 * x * random.randint(1,6) + random.randint(1,6)
         self.DP = x/2 * random.randint(1, 6) + int(random.randint(1,6) /2)
@@ -60,3 +60,5 @@ class BOSS:
         self.strike_back = self.SP + 2 * random.randint(1, 6)
         if self.HP <0:
             self.HP = 0
+    def Level_up(self):
+        pass
