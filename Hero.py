@@ -1,4 +1,7 @@
-class Hero:
+import random
+
+
+class Hero():
 
     def __init__(self):
         self.x = 0
@@ -8,3 +11,13 @@ class Hero:
     def move(self, x = 0, y = 0):
         self.x += x
         self.y += y
+    def stats(self):
+        self.HP = 20 + 3 * random.randint(1,6)
+        self.DP = 2 * random.randint(1,6)
+        self.SP = 5 + random.randint(1,6)
+    def strike(self):
+        self.SP_Value = self.SP + 2* random.randint(1,6)
+    def receive_strike(self, strike_back = 0):
+        self.HP -= strike_back
+        if self.HP <0:
+            self.img = "skull"
