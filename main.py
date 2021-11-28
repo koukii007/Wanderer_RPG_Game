@@ -5,9 +5,12 @@ from skeleton import *
 from BOSS import BOSS
 from sounds import *
 from key import key
+from IntermediaryForMapCreation import *
 import random
 import pygame
 import os
+
+
 
 IMG_SIZE = 72
 WIDTH = 10 * IMG_SIZE
@@ -42,15 +45,13 @@ hero.stats()
 skeleton1 = skeleton_1()
 skeleton2 = skeleton_2()
 skeleton3 = skeleton_3()
-skeleton1.stats()
-skeleton2.stats()
-skeleton3.stats()
-Boss =BOSS()
-Boss.stats()
+Boss = BOSS()
 keys = key()
+current_map = game_map()
 
 
 class draw:
+
     def __init__(self):
         self.map_key = None
 
@@ -65,10 +66,10 @@ class draw:
 
 
     def draw_map(self):
-
         canvas.delete("all")
         if not self.map_key:
-            with open('first_map.txt', 'r') as map_display:
+
+            with open(current_map.map_path, 'r') as map_display:
                 self.map_key = map_display.readlines()
             ending_point = 0
             all_wall_coords = []
@@ -103,6 +104,9 @@ class draw:
             skeleton2.Is_key_holder(x=1)
 
 
+
+
+
 class show_stats():
 
     def draw_stats(self):
@@ -111,11 +115,12 @@ class show_stats():
         canvas.create_text(870,55,text = "STATS" ,font = ("arial",50,"bold"), fill = "#FA545C")
         canvas.create_text(790, 140, text=f"\nHero HP : {hero.HP}\nHero DP : {hero.DP}\nHero SP : {hero.SP}", font=("arial", 16) , fill="black")
         canvas.create_text(870,600, text=f"\n Your Mission it to eliminate the monsters"
-                                          f"\n and extract the key."
+                                          f"\n first then extract the key."
                                           f"\n Defeat the Boss, and you will"
                                           f"\n teleport to the next map."
                                           f"\n\n Press the space bar to strike."
                                           f"\n Press F to pick an item.", font=("arial", 11,"bold") , fill="red")
+        canvas.create_text(870 , 500, text=f"\n LEVEL : {current_map.map_number}", font=("arial", 20, "bold"), fill="red")
         if keys.x == -2 and keys.y == -2:
             canvas.create_text(860, 300, text=f"You have successfully retrieved the key.",
                                font=("arial", 11), fill="blue")
@@ -166,10 +171,11 @@ def load_images():
 load_images()
 
 map = draw()
-wall_coords = map.draw_map()
+
 count = 0
 
 def leftKey(event):
+
     position_check = (hero.x-1, hero.y)
     if 10 > hero.x > 0 and position_check not in wall_coords :
         hero.move(x = -1)
@@ -192,6 +198,7 @@ def leftKey(event):
     else:
         count =0
 def rightKey(event):
+
     position_check = (hero.x + 1 , hero.y)
     if 9 > hero.x >= 0 and position_check not in wall_coords:
         hero.move(x = 1)
@@ -214,6 +221,7 @@ def rightKey(event):
     else:
         count = 0
 def upKey(event):
+
     position_check = (hero.x , hero.y-1)
     if 10 > hero.y > 0 and position_check not in wall_coords :
         hero.move(y = -1)
@@ -237,6 +245,7 @@ def upKey(event):
         count = 0
 
 def downKey(event):
+
     position_check = (hero.x, hero.y +1)
     if 9 > hero.y >= 0 and position_check not in wall_coords:
         hero.move(y=1)
@@ -259,9 +268,8 @@ def downKey(event):
     else:
         count = 0
 
-
 def space_key_press(event):
-
+    global map_counter
     for i in range(0,100):
         canvas.create_image(hero.x * IMG_SIZE, hero.y * IMG_SIZE,
                             image=getattr(root, "strike"), anchor=NW)
@@ -306,18 +314,28 @@ def space_key_press(event):
                     keys.receive_position(x=skeleton3.x, y=skeleton3.y)
                 else:
                     pass
-    elif coords_hero == coords_Boss:
+
+    elif coords_hero == coords_Boss and skeleton1.HP == 0 and skeleton2.HP == 0 and skeleton3.HP == 0:
         hero.strike()
         if hero.SP_Value > Boss.DP:
             Boss.receive_strike(hero.SP_Value)
             if Boss.HP > 0:
                 hero.receive_strike(Boss.strike_back)
-            elif Boss.HP ==0:
-                hero.level_up
-                skeleton1.level_up
-                skeleton2.level_up
-                skeleton3.level_up
-                Boss.level_up
+            elif Boss.HP ==0 and skeleton1.HP == 0 and skeleton2.HP == 0 and skeleton3.HP == 0 and keys.x == -2 and keysl.y == -2:
+                current_map.go_next_map()
+                current_map.coords_check()
+                hero.reset()
+                skeleton1.reset()
+                skeleton2.reset()
+                skeleton3.reset()
+                Boss.reset()
+                hero.level_up()
+                skeleton1.level_up()
+                skeleton2.level_up()
+                skeleton3.level_up()
+                Boss.level_up()
+                pass
+
 
 def pick_up_key(event):
     hero_coords = (hero.x, hero.y)
@@ -345,12 +363,14 @@ clock = pygame.time.Clock()
 stat_report = show_stats()
 
 while True:
+    always_Update_coords_check = game_map()
+    always_Update_coords_check.coords_check()
     map = draw()
     map.draw_map()
     map.draw_characters()
     map.distribute_key()
     stat_report.draw_stats()
     stat_report.show_monster_stats()
-    clock.tick(60)
+    clock.tick(50)
     root.update_idletasks()
     root.update()

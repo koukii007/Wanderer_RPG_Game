@@ -13,6 +13,7 @@ class Hero():
         self.y += y
     def stats(self):
         self.HP = 20 + 3 * random.randint(1,6)
+        self.maxHP = self.HP
         self.DP = 2 * random.randint(1,6)
         self.SP = 5 + random.randint(1,6)
     def strike(self):
@@ -22,4 +23,9 @@ class Hero():
         if self.HP <0:
             self.img = "skull"
     def level_up(self):
-        pass
+        self.HP = random.randint(1,6) + self.maxHP
+        self.DP += random.randint(1,6)
+        self.SP += random.randint(1, 6)
+    def reset(self):
+        self.x = 0
+        self.y = 0

@@ -1,18 +1,31 @@
-from skeleton import *
-skeleton1 = skeleton_1()
-skeleton2 = skeleton_2()
-skeleton3 = skeleton_3()
+import random
+def generate_new_map():
+    with open('map.txt', 'w+') as allmapfile:
 
-def distribute_key():
-    if skeleton1.key_holder == 1:
-        skeleton2.Is_key_holder(x=0)
-        skeleton3.Is_key_holder(x=0)
-    elif skeleton2.key_holder == 1:
-        skeleton1.Is_key_holder(x=0)
-        skeleton3.Is_key_holder(x=0)
-    elif skeleton3.key_holder == 1:
-        skeleton1.Is_key_holder(x=0)
-        skeleton2.Is_key_holder(x=0)
-    elif skeleton1.key_holder == 0 and skeleton2.key_holder == 0 and skeleton3.key_holder == 0:
-        skeleton2.Is_key_holder(x=1)
+        for j in range(0,10):
+            line = ""
+            for i in range(0,10):
+                line += random.choice(['F','F','F','F','F','W','F','W','F','W'])
 
+            line += "\n"
+            allmapfile.write(line)
+class draw:
+    def __init__(self):
+        self.map_key = None
+        self.map_path = "map1.txt"
+        self.map_counter = 1
+    def update_map(self):
+        self.map_counter += 1
+
+        self.map_path = "map" + str(self.map_counter) + ".txt"
+
+map = draw()
+print(map.map_counter)
+map.update_map()
+print(map.map_counter)
+print(map.map_path)
+map_counter = 1
+def update_map():
+    map_counter += 1
+    file = "map" + str(map_counter) + ".txt"
+    return file
