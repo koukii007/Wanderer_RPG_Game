@@ -2,7 +2,7 @@
 <a href="https://ibb.co/MGXgfR3"><img src="https://i.ibb.co/JyhcqzM/main.png" alt="main" border="0"></a>
 
 <h1>Description: </h1>
-Disclaimer: This game was created for a class project! <br>
+<strong>Disclaimer:</strong> This game was created for a class project! <br>
 This is an RPG Game that allows the hero to wander arround and discover the map. <br>
 His mission is to eliminate the monsters and extract a key that will allow him to pass to the next level. <br>
 After extracting the key, the Hero takes out the Boss that has been teasing him during his quest to look for the key <br>
