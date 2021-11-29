@@ -18,5 +18,7 @@ The game has 10 levels.<strong> Enjoy!</strong> <br>
 <strong>4-</strong> Pick up items by pressing F. <br>
 <strong>5-</strong> Pick up potions to heal up. <br>
 <h1>Preview:</h1>
-<a href="https://ibb.co/MGXgfR3"><img src="https://i.ibb.co/JyhcqzM/main.png" alt="main" border="0"></a>
+
+<a href="https://ibb.co/ZKSZYdv"><img src="https://i.ibb.co/mt0xXJd/mid.png" alt="mid" border="0"></a>
+
 <a href="https://ibb.co/wBvJZnj"><img src="https://i.ibb.co/YPrD45w/End.png" alt="End" border="0"></a>
