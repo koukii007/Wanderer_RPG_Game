@@ -6,7 +6,7 @@ from BOSS import BOSS
 from sounds import *
 from key import key
 from IntermediaryForMapCreation import *
-import random
+from potion import *
 import pygame
 import os
 
@@ -27,6 +27,7 @@ pygame.mixer.init()
 path = os.getcwd()
 stop_button_img = PhotoImage(file=path + "\\images\\cutsound.png")
 play_button_img = PhotoImage(file=path + "\\images\\playsound.png")
+next_level_img = PhotoImage(file=path + "\\images\\next.png")
 stop_music_button = Button(root, text="stop music", image=stop_button_img, command=stop_music, height=38,
                            width=40)
 stop_music_button.place(x=970, y=674)
@@ -48,8 +49,8 @@ skeleton3 = skeleton_3()
 Boss = BOSS()
 keys = key()
 current_map = game_map()
-
-
+spawn_potion = potion()
+blue_potion = blue_potion()
 class draw:
 
     def __init__(self):
@@ -60,35 +61,41 @@ class draw:
         canvas.create_image(skeleton1.x * IMG_SIZE, skeleton1.y * IMG_SIZE, image=getattr(root, skeleton1.img), anchor=NW)
         canvas.create_image(skeleton2.x * IMG_SIZE, skeleton2.y * IMG_SIZE, image=getattr(root, skeleton2.img), anchor=NW)
         canvas.create_image(skeleton3.x * IMG_SIZE, skeleton3.y * IMG_SIZE, image=getattr(root, skeleton3.img), anchor=NW)
-        canvas.create_image(Boss.x * IMG_SIZE, Boss.y * IMG_SIZE, image=getattr(root, "boss"), anchor=NW)
+        canvas.create_image(Boss.x * IMG_SIZE, Boss.y * IMG_SIZE, image=getattr(root, Boss.img), anchor=NW)
         canvas.create_image(keys.x * IMG_SIZE, keys.y * IMG_SIZE, image=getattr(root, keys.img), anchor=NW)
+        canvas.create_image(spawn_potion.x * IMG_SIZE, spawn_potion.y * IMG_SIZE, image=getattr(root, spawn_potion.img), anchor=NW)
+        canvas.create_image(blue_potion.x * IMG_SIZE, blue_potion.y * IMG_SIZE, image=getattr(root, blue_potion.img),
+                            anchor=NW)
 
 
 
     def draw_map(self):
+
         canvas.delete("all")
         if not self.map_key:
+            if current_map.map_number != 10:
+                with open(current_map.map_path, 'r') as map_display:
+                    self.map_key = map_display.readlines()
+                ending_point = 0
+                all_wall_coords = []
+                temp_coords = [0,0]
+                for line in range(len(self.map_key)):
+                    starting_point = 0
+                    for i in range(0, len(self.map_key[line])):
+                        if self.map_key[line][i] == "F":
+                            canvas.create_image(starting_point, ending_point, image=root.floor, anchor=NW)
+                            starting_point += IMG_SIZE
+                        elif self.map_key[line][i] == "W":
+                            canvas.create_image(starting_point, ending_point, image=root.wall, anchor=NW)
+                            starting_point += IMG_SIZE
+                            temp_coords[0] = int(starting_point/IMG_SIZE)-1
+                            temp_coords[1] = int(ending_point/IMG_SIZE)
+                            all_wall_coords.append(tuple(temp_coords))
 
-            with open(current_map.map_path, 'r') as map_display:
-                self.map_key = map_display.readlines()
-            ending_point = 0
-            all_wall_coords = []
-            temp_coords = [0,0]
-            for line in range(len(self.map_key)):
-                starting_point = 0
-                for i in range(0, len(self.map_key[line])):
-                    if self.map_key[line][i] == "F":
-                        canvas.create_image(starting_point, ending_point, image=root.floor, anchor=NW)
-                        starting_point += IMG_SIZE
-                    elif self.map_key[line][i] == "W":
-                        canvas.create_image(starting_point, ending_point, image=root.wall, anchor=NW)
-                        starting_point += IMG_SIZE
-                        temp_coords[0] = int(starting_point/IMG_SIZE)-1
-                        temp_coords[1] = int(ending_point/IMG_SIZE)
-                        all_wall_coords.append(tuple(temp_coords))
-
-                ending_point += IMG_SIZE
-            return  all_wall_coords
+                    ending_point += IMG_SIZE
+                return  all_wall_coords
+            elif current_map.map_number == 10 :
+                root.destroy()
 
     def distribute_key(self):
         if skeleton1.key_holder == 1 :
@@ -120,7 +127,7 @@ class show_stats():
                                           f"\n teleport to the next map."
                                           f"\n\n Press the space bar to strike."
                                           f"\n Press F to pick an item.", font=("arial", 11,"bold") , fill="red")
-        canvas.create_text(870 , 500, text=f"\n LEVEL : {current_map.map_number}", font=("arial", 20, "bold"), fill="red")
+        canvas.create_text(870 , 490, text=f"\n CURRENT LEVEL -> {current_map.map_number}", font=("arial", 19, "bold"), fill="red")
         if keys.x == -2 and keys.y == -2:
             canvas.create_text(860, 300, text=f"You have successfully retrieved the key.",
                                font=("arial", 11), fill="blue")
@@ -132,6 +139,8 @@ class show_stats():
         coords_monster2 = (skeleton2.x, skeleton2.y)
         coords_monster3 = (skeleton3.x, skeleton3.y)
         coords_Boss = (Boss.x,Boss.y)
+        red_potion = (spawn_potion.x,spawn_potion.y)
+        blue_potion_coords = (blue_potion.x,blue_potion.y)
 
         if coords_hero == coords_monster1:
             canvas.create_text(810, 220,
@@ -151,6 +160,20 @@ class show_stats():
             canvas.create_text(795, 220,
                                text=f"\nBoss HP : {Boss.HP}\nBoss DP : {Boss.DP}\nBoss SP : {Boss.SP}",
                                font=("arial", 16), fill="Red")
+        elif coords_hero == red_potion:
+            canvas.create_text(865, 350, text=f"\nPick up a red potion before a boss fight"
+                                              f"\nto heal up.",
+                               font=("arial", 10, "bold"), fill="red")
+        elif coords_hero == blue_potion_coords:
+            canvas.create_text(865, 350, text=f"\nPick up a blue potion to make your strikes"
+                                              f"\nmore effective."
+                                              ,
+                               font=("arial", 10, "bold"), fill="blue")
+
+
+def next_level_button(x,y):
+    next_level = Button(root, text="Next ->", image=next_level_img, command=reset_and_go, height=50, width=200)
+    next_level.place(x=x, y=y)
 
 
 
@@ -168,6 +191,10 @@ def load_images():
     root.ghost = PhotoImage (file=dir + "ghost.png")
     root.key = PhotoImage(file=dir + "key.png")
     root.effect = PhotoImage(file=dir + "effect.png")
+    root.gameover = PhotoImage(file=dir + "game_over.png")
+    root.skull = PhotoImage(file=dir + "skull.png")
+    root.potion = PhotoImage(file=dir + "potion.png")
+    root.blue_potion = PhotoImage(file=dir + "blue_potion.png")
 load_images()
 
 map = draw()
@@ -176,14 +203,17 @@ count = 0
 
 def leftKey(event):
 
+    current_map.coords_check()
+
     position_check = (hero.x-1, hero.y)
-    if 10 > hero.x > 0 and position_check not in wall_coords :
-        hero.move(x = -1)
-        hero.img = "hero_left"
-        coords_hero = (hero.x, hero.y)
-        coords_Boss = (Boss.x, Boss.y)
-        if coords_hero == coords_Boss:
-            Boss_sound()
+    if 10 > hero.x > 0 and position_check not in current_map.coords_check() :
+        if hero.HP != 0:
+            hero.move(x = -1)
+            hero.img = "hero_left"
+            coords_hero = (hero.x, hero.y)
+            coords_Boss = (Boss.x, Boss.y)
+            if coords_hero == coords_Boss:
+                Boss_sound()
     else:
         hero.img = "hero_down"
 
@@ -194,19 +224,21 @@ def leftKey(event):
         skeleton1.move_skeleton1()
         skeleton2.move_skeleton2()
         skeleton3.move_skeleton3()
-        Boss.move()
+        if Boss.HP != 0:
+            Boss.move()
     else:
         count =0
 def rightKey(event):
-
+    current_map.coords_check()
     position_check = (hero.x + 1 , hero.y)
-    if 9 > hero.x >= 0 and position_check not in wall_coords:
-        hero.move(x = 1)
-        hero.img = "hero_right"
-        coords_hero = (hero.x, hero.y)
-        coords_Boss = (Boss.x, Boss.y)
-        if coords_hero == coords_Boss:
-            Boss_sound()
+    if 9 > hero.x >= 0 and position_check not in current_map.coords_check():
+        if hero.HP != 0:
+            hero.move(x = 1)
+            hero.img = "hero_right"
+            coords_hero = (hero.x, hero.y)
+            coords_Boss = (Boss.x, Boss.y)
+            if coords_hero == coords_Boss:
+                Boss_sound()
     else:
         hero.img = "hero_down"
 
@@ -217,19 +249,21 @@ def rightKey(event):
         skeleton1.move_skeleton1()
         skeleton2.move_skeleton2()
         skeleton3.move_skeleton3()
-        Boss.move()
+        if Boss.HP != 0:
+            Boss.move()
     else:
         count = 0
 def upKey(event):
-
+    current_map.coords_check()
     position_check = (hero.x , hero.y-1)
-    if 10 > hero.y > 0 and position_check not in wall_coords :
-        hero.move(y = -1)
-        hero.img = "hero_up"
-        coords_hero = (hero.x, hero.y)
-        coords_Boss = (Boss.x, Boss.y)
-        if coords_hero == coords_Boss:
-            Boss_sound()
+    if 10 > hero.y > 0 and position_check not in current_map.coords_check():
+        if hero.HP != 0:
+            hero.move(y = -1)
+            hero.img = "hero_up"
+            coords_hero = (hero.x, hero.y)
+            coords_Boss = (Boss.x, Boss.y)
+            if coords_hero == coords_Boss:
+                Boss_sound()
     else:
         hero.img = "hero_down"
 
@@ -240,20 +274,22 @@ def upKey(event):
         skeleton1.move_skeleton1()
         skeleton2.move_skeleton2()
         skeleton3.move_skeleton3()
-        Boss.move()
+        if Boss.HP != 0:
+            Boss.move()
     else:
         count = 0
 
 def downKey(event):
-
+    current_map.coords_check()
     position_check = (hero.x, hero.y +1)
-    if 9 > hero.y >= 0 and position_check not in wall_coords:
-        hero.move(y=1)
-        hero.img = "hero_down"
-        coords_hero = (hero.x, hero.y)
-        coords_Boss = (Boss.x, Boss.y)
-        if coords_hero == coords_Boss:
-            Boss_sound()
+    if 9 > hero.y >= 0 and position_check not in current_map.coords_check():
+        if hero.HP != 0:
+            hero.move(y=1)
+            hero.img = "hero_down"
+            coords_hero = (hero.x, hero.y)
+            coords_Boss = (Boss.x, Boss.y)
+            if coords_hero == coords_Boss:
+                Boss_sound()
     else:
         hero.img = "hero_up"
 
@@ -264,12 +300,13 @@ def downKey(event):
         skeleton1.move_skeleton1()
         skeleton2.move_skeleton2()
         skeleton3.move_skeleton3()
-        Boss.move()
+        if Boss.HP != 0:
+            Boss.move()
     else:
         count = 0
 
 def space_key_press(event):
-    global map_counter
+    current_map.coords_check()
     for i in range(0,100):
         canvas.create_image(hero.x * IMG_SIZE, hero.y * IMG_SIZE,
                             image=getattr(root, "strike"), anchor=NW)
@@ -321,30 +358,49 @@ def space_key_press(event):
             Boss.receive_strike(hero.SP_Value)
             if Boss.HP > 0:
                 hero.receive_strike(Boss.strike_back)
-            elif Boss.HP ==0 and skeleton1.HP == 0 and skeleton2.HP == 0 and skeleton3.HP == 0 and keys.x == -2 and keysl.y == -2:
-                current_map.go_next_map()
-                current_map.coords_check()
-                hero.reset()
-                skeleton1.reset()
-                skeleton2.reset()
-                skeleton3.reset()
-                Boss.reset()
-                hero.level_up()
-                skeleton1.level_up()
-                skeleton2.level_up()
-                skeleton3.level_up()
-                Boss.level_up()
-                pass
+            elif Boss.HP ==0 and skeleton1.HP == 0 and skeleton2.HP == 0 and skeleton3.HP == 0 and keys.x == -2 and keys.y == -2:
+                next_level_button(770,430)
 
+
+def reset_and_go():
+    current_map.go_next_map()
+    current_map.coords_check()
+    hero.reset()
+    skeleton1.reset()
+    skeleton2.reset()
+    skeleton3.reset()
+    Boss.reset()
+    blue_potion.reset()
+    spawn_potion.reset()
+    hero.level_up()
+    skeleton1.level_up()
+    skeleton2.level_up()
+    skeleton3.level_up()
+    Boss.level_up()
 
 def pick_up_key(event):
     hero_coords = (hero.x, hero.y)
     key_coords = (keys.x, keys.y)
+    potion_coords = (spawn_potion.x,spawn_potion.y)
+    blue_potion_coords = (blue_potion.x,blue_potion.y)
     if hero_coords == key_coords:
         keys.receive_position(x=-2,y=-2)
         for i in range(0, 100):
             canvas.create_image(hero.x * IMG_SIZE, hero.y * IMG_SIZE,
                                 image=getattr(root, "effect"), anchor=NW)
+    elif hero_coords == potion_coords:
+        spawn_potion.receive_position(x=-2,y=-2)
+        hero.heal_up()
+        for i in range(0, 100):
+            canvas.create_image(hero.x * IMG_SIZE, hero.y * IMG_SIZE,
+                                image=getattr(root, "effect"), anchor=NW)
+    elif hero_coords == blue_potion_coords:
+        blue_potion.receive_position(x=-2,y=-2)
+        hero.strike_up()
+        for i in range(0, 100):
+            canvas.create_image(hero.x * IMG_SIZE, hero.y * IMG_SIZE,
+                                image=getattr(root, "effect"), anchor=NW)
+
 
 
 root.bind('<Left>', leftKey)
@@ -357,8 +413,7 @@ root.bind('<Down>', downKey)
 root.bind('<s>', downKey)
 root.bind('<space>', space_key_press)
 root.bind('<f>', pick_up_key)
-# Don't write anything after this while loop, because that won't be executed
-# The main game loop, at the moment it calls the draw_screen function continuously
+
 clock = pygame.time.Clock()
 stat_report = show_stats()
 

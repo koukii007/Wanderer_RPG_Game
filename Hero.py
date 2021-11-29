@@ -1,5 +1,6 @@
 import random
-
+from IntermediaryForMapCreation import *
+map = game_map()
 
 class Hero():
 
@@ -29,3 +30,8 @@ class Hero():
     def reset(self):
         self.x = 0
         self.y = 0
+    def heal_up(self):
+        self.HP += 5 + map.map_number
+    def strike_up(self):
+        self.SP += 3 + map.map_number
+

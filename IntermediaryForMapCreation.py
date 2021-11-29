@@ -6,10 +6,12 @@ class game_map():
         self.perimeter = [(1,-1),(2,-1),(3,-1),(4,-1),(5,-1),(6,-1),(7,-1),(8,-1),(9,-1),
                    (10,1),(10,2),(10,3),(10,4),(10,5),(10,6),(10,7),(10,8),(10,9),
                    (1,10),(2,10),(3,10),(4,10),(5,10),(6,10),(7,10),(8,10),(9,10),
-                   (-1,1),(-1,2),(-1,3),(-1,4),(-1,5),(-1,6),(-1,7),(-1,8),(-1,9),(-1,-1),(10,0)]
+                   (-1,1),(-1,2),(-1,3),(-1,4),(-1,5),(-1,6),(-1,7),(-1,8),(-1,9),(-1,-1),(10,0),(0,10)]
     def go_next_map(self):
         self.map_number += 1
         self.map_path = "map" + str(self.map_number) +".txt"
+
+
 
     def coords_check(self):
         IMG_SIZE = 72
@@ -30,6 +32,5 @@ class game_map():
                         all_wall_coords.append(tuple(coords))
                 ending_point += IMG_SIZE
             return all_wall_coords
-
 
 
