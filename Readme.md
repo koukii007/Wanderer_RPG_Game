@@ -6,7 +6,7 @@
 This is an RPG Game that allows the hero to wander arround and discover the map. <br>
 His mission is to eliminate the monsters and extract a key that will allow him to pass to the next level. <br>
 After extracting the key, the Hero takes out the Boss that has been teasing him during his quest to look for the key <br>
-
+The game has 10 levels.<strong> Enjoy!</strong> <br>
 <h1>How to run the Game?</h1>
 <strong>1-</strong> Make sure that you have all the necessary files saved in the same directory.  <br>
 <strong>2-</strong> Run from the terminal the following code: <code><strong>python main.py</strong></code> <br>
