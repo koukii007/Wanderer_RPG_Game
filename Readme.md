@@ -22,7 +22,7 @@ The game has 10 levels.<strong> Enjoy!</strong> <br>
 <h1>Preview:</h1>
 
 <a href="https://ibb.co/ZKSZYdv"><img src="https://i.ibb.co/mt0xXJd/mid.png" alt="mid" border="0"></a>
-
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- <br>
 <a href="https://ibb.co/wBvJZnj"><img src="https://i.ibb.co/YPrD45w/End.png" alt="End" border="0"></a>
 
 
