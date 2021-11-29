@@ -8,6 +8,7 @@ floor_perimeter = map_for_boss.perimeter
 class BOSS:
 
     def __init__(self):
+        map_for_boss.coords_check()
         self.img = "boss"
         self.HP = 2 * 1 * random.randint(1, 6) + random.randint(1, 6)
         self.maxHP = self.HP

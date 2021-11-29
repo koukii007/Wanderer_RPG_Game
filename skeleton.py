@@ -10,6 +10,7 @@ class skeleton_1(Hero):
 
 
     def __init__(self):
+        map_for_skeleton.coords_check()
         self.HP = 2 * 1 * random.randint(1, 6)
         self.DP = 1 / 2 * random.randint(1, 6)
         self.SP = 1 * random.randint(1, 6)
@@ -74,6 +75,7 @@ class skeleton_1(Hero):
 class skeleton_2(Hero):
 
     def __init__(self):
+        map_for_skeleton.coords_check()
         self.HP = 2 * 1 * random.randint(1, 6)
         self.DP = 1 / 2 * random.randint(1, 6)
         self.SP = 1 * random.randint(1, 6)
@@ -138,6 +140,7 @@ class skeleton_2(Hero):
 class skeleton_3(Hero):
 
     def __init__(self):
+        map_for_skeleton.coords_check()
         self.HP = 2 * 1 * random.randint(1, 6)
         self.DP = 1 / 2 * random.randint(1, 6)
         self.SP = 1 * random.randint(1, 6)

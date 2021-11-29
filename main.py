@@ -170,13 +170,6 @@ class show_stats():
                                               ,
                                font=("arial", 10, "bold"), fill="blue")
 
-
-def next_level_button(x,y):
-    next_level = Button(root, text="Next ->", image=next_level_img, command=reset_and_go, height=50, width=200)
-    next_level.place(x=x, y=y)
-
-
-
 def load_images():
     dir = "images/"
     root.floor = PhotoImage(file=dir + "floor.png")
@@ -359,24 +352,27 @@ def space_key_press(event):
             if Boss.HP > 0:
                 hero.receive_strike(Boss.strike_back)
             elif Boss.HP ==0 and skeleton1.HP == 0 and skeleton2.HP == 0 and skeleton3.HP == 0 and keys.x == -2 and keys.y == -2:
-                next_level_button(770,430)
-
+                # next_level_button(770,430)
+                next_level = Button(root, text="Next ->", image=next_level_img, command=reset_and_go, height=50,
+                                    width=200)
+                next_level.place(x=770, y=430)
 
 def reset_and_go():
-    current_map.go_next_map()
-    current_map.coords_check()
-    hero.reset()
-    skeleton1.reset()
-    skeleton2.reset()
-    skeleton3.reset()
-    Boss.reset()
-    blue_potion.reset()
-    spawn_potion.reset()
-    hero.level_up()
-    skeleton1.level_up()
-    skeleton2.level_up()
-    skeleton3.level_up()
-    Boss.level_up()
+    if Boss.HP ==0 and skeleton1.HP == 0 and skeleton2.HP == 0 and skeleton3.HP == 0 and keys.x == -2 and keys.y == -2:
+        current_map.go_next_map()
+        current_map.coords_check()
+        hero.reset()
+        skeleton1.reset()
+        skeleton2.reset()
+        skeleton3.reset()
+        Boss.reset()
+        blue_potion.reset()
+        spawn_potion.reset()
+        hero.level_up()
+        skeleton1.level_up()
+        skeleton2.level_up()
+        skeleton3.level_up()
+        Boss.level_up()
 
 def pick_up_key(event):
     hero_coords = (hero.x, hero.y)

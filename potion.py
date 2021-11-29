@@ -5,6 +5,7 @@ map = game_map()
 floor_perimeter = map.perimeter
 class potion:
     def __init__(self):
+        map.coords_check()
         self.img = "potion"
         self.x = random.randint(0, 5)
         self.y = random.randint(0, 6)
@@ -30,6 +31,7 @@ class potion:
 
 class blue_potion():
     def __init__(self):
+        map.coords_check()
         self.img = "blue_potion"
         self.x = random.randint(4, 9)
         self.y = random.randint(4, 9)
