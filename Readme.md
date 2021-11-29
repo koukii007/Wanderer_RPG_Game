@@ -1,6 +1,8 @@
 # Wanderer RPG Game
 <a href="https://ibb.co/MGXgfR3"><img src="https://i.ibb.co/JyhcqzM/main.png" alt="main" border="0"></a>
 
+
+
 <h1>Description: </h1>
 <strong>Disclaimer:</strong> This game was created for a class project! <br>
 This is an RPG Game that allows the hero to wander arround and discover the map. <br>
@@ -22,3 +24,8 @@ The game has 10 levels.<strong> Enjoy!</strong> <br>
 <a href="https://ibb.co/ZKSZYdv"><img src="https://i.ibb.co/mt0xXJd/mid.png" alt="mid" border="0"></a>
 
 <a href="https://ibb.co/wBvJZnj"><img src="https://i.ibb.co/YPrD45w/End.png" alt="End" border="0"></a>
+
+
+
+
+
